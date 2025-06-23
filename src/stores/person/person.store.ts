@@ -2,6 +2,7 @@ import { create, StateCreator } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { firebaseStorage } from "../storages/firebase.storage";
 import { logger } from "../middlewares/logger.middleware";
+import { useWeddingBoundStore } from "../wedding";
 // import { customSessionStorage } from "../storages/session-storage.storage";
 
 interface PersonState {
@@ -43,3 +44,11 @@ export const usePersonStore = create<PersonState & Actions>()(
     })
   )
 );
+
+usePersonStore.subscribe((nextState) => {
+  const { firstName, lastName } = nextState;
+  const wed = useWeddingBoundStore.getState();
+
+  if (wed.firstName !== firstName) wed.setFirstName(firstName);
+  if (wed.lastName !== lastName) wed.setLastName(lastName);
+});

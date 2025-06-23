@@ -8,6 +8,7 @@ import {
   ConfirmationSlice,
   createConfirmationSlice,
 } from "./confirmation.slice";
+import { usePersonStore } from "../person/person.store";
 
 type ShareState = PersonSlice & GuestSlice & DateSlice & ConfirmationSlice;
 
@@ -19,3 +20,11 @@ export const useWeddingBoundStore = create<ShareState>()(
     ...createConfirmationSlice(...a),
   }))
 );
+
+useWeddingBoundStore.subscribe((nextState) => {
+  const { firstName, lastName } = nextState;
+  const per = usePersonStore.getState();
+
+  if (per.firstName !== firstName) per.setFirstName(firstName);
+  if (per.lastName !== lastName) per.setLastName(lastName);
+});
